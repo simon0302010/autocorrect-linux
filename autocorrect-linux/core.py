@@ -1,14 +1,24 @@
+import os
 import click
 import enchant
 from subprocess import PIPE, Popen
+import enchant.pypwl
 from pynput.keyboard import Key, Listener
 
 letters = {}
 texts = {}
 learned_words = {}
 
-dictionary = enchant.Dict("en")
+pwl_path = "pwl.txt"
 
+if not os.path.exists(pwl_path):
+    open(pwl_path, 'a').close()
+
+# load dictionaries
+pwl = enchant.pypwl.PyPWL(pwl_path)
+dictionary = enchant.DictWithPWL("en", pwl_path)
+
+# get id of focused window
 def get_window_id():
     try:
         root = Popen(['xprop', '-root', '_NET_ACTIVE_WINDOW'], stdout=PIPE, stderr=PIPE)
@@ -27,7 +37,7 @@ def get_window_id():
     return "Unknown"
 
 def on_press(key):
-    global letters, texts, learned_words
+    global letters, texts, learned_words, pwl
 
     current_window_id = str(get_window_id())
     if current_window_id not in letters:
@@ -43,10 +53,8 @@ def on_press(key):
     text = "".join(letters[current_window_id])
     texts[current_window_id] = text
     words = text.split(" ")
-    #click.echo(words)
     if words:
         last_word = words[-1]
-        click.echo(f"Last word: {letters[current_window_id][-1]}, {len(letters[current_window_id][-1])}")
         if not last_word.isnumeric():
             if last_word and dictionary.check(last_word):
                 click.secho(last_word, fg="green")
@@ -65,6 +73,9 @@ def on_press(key):
                         else:
                             learned_words[last_word] = {"uses": 1}
                         click.secho(f"{last_word} has been used {learned_words[last_word]['uses']} times.", fg="yellow")
+                        if learned_words[last_word]["uses"] >= 3:
+                            pwl.add_to_pwl(last_word)
+                            click.secho(f"Added {last_word} to PWL", fg="blue")
     
 def main():
     with Listener(on_press=on_press) as listener:
