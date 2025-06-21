@@ -5,6 +5,7 @@ from pynput.keyboard import Key, Listener
 
 letters = {}
 texts = {}
+learned_words = {}
 
 dictionary = enchant.Dict("en")
 
@@ -26,6 +27,8 @@ def get_window_id():
     return "Unknown"
 
 def on_press(key):
+    global letters, texts, learned_words
+
     current_window_id = str(get_window_id())
     if current_window_id not in letters:
         letters[current_window_id] = []
@@ -39,14 +42,29 @@ def on_press(key):
     
     text = "".join(letters[current_window_id])
     texts[current_window_id] = text
-    words = texts[current_window_id].split(" ")
+    words = text.split(" ")
     #click.echo(words)
-    last_word = words[-1]
-    if last_word != "" and not last_word.isnumeric():
-        if dictionary.check(last_word):
-            pass
-        else:
-            click.echo(dictionary.suggest(last_word)[0])
+    if words:
+        last_word = words[-1]
+        click.echo(f"Last word: {letters[current_window_id][-1]}, {len(letters[current_window_id][-1])}")
+        if not last_word.isnumeric():
+            if last_word and dictionary.check(last_word):
+                click.secho(last_word, fg="green")
+            else:
+                if last_word:
+                    suggestions = dictionary.suggest(last_word)
+                    if suggestions:
+                        click.secho(suggestions[0], fg="red")
+                    else:
+                        click.secho(f"No suggestions for: {last_word}", fg="yellow")
+                elif text.endswith(" "):
+                    if not dictionary.check(words[-2]):
+                        last_word = words[-2]
+                        if last_word in learned_words:
+                            learned_words[last_word]["uses"] += 1
+                        else:
+                            learned_words[last_word] = {"uses": 1}
+                        click.secho(f"{last_word} has been used {learned_words[last_word]['uses']} times.", fg="yellow")
     
 def main():
     with Listener(on_press=on_press) as listener:
