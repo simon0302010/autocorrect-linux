@@ -14,7 +14,7 @@ authors = [
 ]
 dependencies = [
     "click",
-    "keyboard"
+    "pynput"
 ]
 
 [project.urls]
