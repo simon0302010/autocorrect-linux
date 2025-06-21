@@ -1,9 +1,12 @@
 import click
+import enchant
 from subprocess import PIPE, Popen
 from pynput.keyboard import Key, Listener
 
 letters = {}
 texts = {}
+
+dictionary = enchant.Dict("en")
 
 def get_window_id():
     try:
@@ -36,7 +39,14 @@ def on_press(key):
     
     text = "".join(letters[current_window_id])
     texts[current_window_id] = text
-    click.echo(f"{current_window_id}: {texts[current_window_id]}")
+    words = texts[current_window_id].split(" ")
+    #click.echo(words)
+    last_word = words[-1]
+    if last_word != "" and not last_word.isnumeric():
+        if dictionary.check(last_word):
+            pass
+        else:
+            click.echo(dictionary.suggest(last_word)[0])
     
 def main():
     with Listener(on_press=on_press) as listener:

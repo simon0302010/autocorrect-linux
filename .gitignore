@@ -194,3 +194,4 @@ cython_debug/
 .cursorindexingignore
 
 .vscode/
+test.py

@@ -14,7 +14,8 @@ authors = [
 ]
 dependencies = [
     "click",
-    "pynput"
+    "pynput",
+    "pyenchant"
 ]
 
 [project.urls]
