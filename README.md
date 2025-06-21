@@ -1,3 +1,3 @@
 # autocorrect-linux
 
-systemwide autocorrection for linux and X11.
+System-wide autocorrect for Linux.
