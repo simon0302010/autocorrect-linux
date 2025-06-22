@@ -25,11 +25,11 @@ def get_window_id():
     return "Unknown"
 
 def load_dictionary(pwl_path=None):
-    dict_path = os.path.join(data_dir, "words_alpha.txt")
+    dict_path = os.path.join(data_dir, "words.txt")
     try:
         if not os.path.exists(dict_path):
             click.echo("Downloading dictionary...")
-            response = requests.get("https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt")
+            response = requests.get("https://raw.githubusercontent.com/arstgit/high-frequency-vocabulary/refs/heads/master/30k.txt")
             if response.status_code == 200:
                 with open(dict_path, 'w', encoding='utf-8') as f:
                     f.write(response.text)
@@ -43,7 +43,8 @@ def load_dictionary(pwl_path=None):
                 words.extend(line.strip() for line in pwl_file if line.strip())
         with open(dict_path, 'r', encoding='utf-8') as f:
             words.extend(line.strip() for line in f if line.strip())
-        words = sorted(set(words))
+        #words = sorted(set(words))
+        words = list(words)
         return words
     except requests.RequestException as e:
         click.echo(f"Error loading dictionary: {e}")

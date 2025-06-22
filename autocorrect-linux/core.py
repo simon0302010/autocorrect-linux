@@ -32,9 +32,9 @@ dictionary = utils.load_dictionary(pwl_path=pwl_path)
 def get_suggestions(prefix):    
     suggestions = [w for w in dictionary if w.startswith(prefix) and w != prefix]
     
-    scored = [(w, difflib.SequenceMatcher(None, prefix, w).ratio()) for w in suggestions]
-    scored.sort(key=lambda x: x[1], reverse=True)
-    suggestions = [w for w, score in scored]
+    #scored = [(w, difflib.SequenceMatcher(None, prefix, w).ratio()) for w in suggestions]
+    #scored.sort(key=lambda x: x[1], reverse=True)
+    #suggestions = [w for w, score in scored]
         
     if suggestions:
         return suggestions
