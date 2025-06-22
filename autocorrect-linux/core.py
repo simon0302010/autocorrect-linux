@@ -1,3 +1,4 @@
+import re
 import os
 import click
 #import enchant
@@ -56,7 +57,7 @@ def update_suggestions(suggestions):
         gui_root.after(0, update_text)
 
 def suggest_next():
-    update_suggestions([None, "Next Word 1", "Next Word 2"])
+    update_suggestions(["Next Word 1", "Next Word 2", "Next Word 3"])
 
 def suggest(last_word, text, words):
     if last_word in dictionary:
@@ -106,20 +107,18 @@ def on_press(key):
         letters[current_window_id].append(" ")
     
     text = "".join(letters[current_window_id])
+    click.echo(text)
     texts[current_window_id] = text
-    words = text.split(" ")
-    if words:
+    words_old = text.split(" ")
+    if words_old:
+        words = []
+        for word in words_old:
+            words.append(re.sub(r'[^A-Za-z]', '', word))
         last_word = words[-1]
         if not last_word.isnumeric():
             if last_word.strip:
                 last_word = last_word.strip()
-                click.echo(last_word)
                 suggest(last_word, text, words)
-                #if last_word and last_word in dictionary:
-                #    click.secho(last_word, fg="green")
-                #    update_suggestions([f'"{last_word}"', None, None])
-                #else:
-                #    suggest(last_word, text, words)
             else:
                 suggest(last_word, text, words)
                 
