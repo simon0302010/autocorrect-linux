@@ -37,11 +37,13 @@ def load_dictionary(pwl_path=None):
                 click.echo(f"Failed to download dictionary: {response.status_code}")
                 return []
         click.echo("Loading dictionary...")
+        words = []
+        if pwl_path and os.path.exists(pwl_path):
+            with open(pwl_path, 'r', encoding='utf-8') as pwl_file:
+                words.extend(line.strip() for line in pwl_file if line.strip())
         with open(dict_path, 'r', encoding='utf-8') as f:
-            if pwl_path:
-                with open(pwl_path, 'r', encoding='utf-8') as pwl_file:
-                    f = pwl_file.readlines() + f.readlines()
-            words = sorted(line.strip() for line in f)
+            words.extend(line.strip() for line in f if line.strip())
+        words = sorted(set(words))
         return words
     except requests.RequestException as e:
         click.echo(f"Error loading dictionary: {e}")
