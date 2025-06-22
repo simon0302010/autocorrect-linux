@@ -19,6 +19,9 @@ dependencies = [
     "requests",
     "customtkinter"
 ]
+classifiers = [
+    "Operating System :: POSIX :: Linux"
+]
 
 [project.urls]
 Homepage = "https://github.com/simon0302010/autocorrect-linux"
