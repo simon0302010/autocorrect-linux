@@ -196,3 +196,4 @@ cython_debug/
 .vscode/
 test.py
 pwl.txt
+autocorrect-linux/training/dataset/
