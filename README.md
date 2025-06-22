@@ -24,12 +24,12 @@ Install dependencies:
 
 Arch Linux:
 ```bash
-sudo pacman -S aspell-en
+sudo pacman -S xorg-xprop
 ```
 
 Debian/Ubuntu:
 ```bash
-sudo apt install aspell-en
+sudo apt install x11-utils
 ```
 
 Install the package:
