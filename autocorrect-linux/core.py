@@ -1,9 +1,11 @@
 import os
 import click
-import enchant
-import enchant.pypwl
+#import enchant
+#import enchant.pypwl
+import difflib
 from . import utils
-from pynput.keyboard import Key, Listener
+from pynput import keyboard
+from pynput.keyboard import Key, Listener, KeyCode
 
 # set variables
 gui_root = None
@@ -22,18 +24,20 @@ if not os.path.exists(pwl_path):
     open(pwl_path, 'a').close()
 
 # load dictionaries
-pwl = enchant.pypwl.PyPWL(pwl_path)
-dictionary = enchant.DictWithPWL("en", pwl_path)
+# pwl = enchant.pypwl.PyPWL(pwl_path)
+# dictionary = enchant.DictWithPWL("en", pwl_path)
 
-def get_suggestions(word):
-    valid_suggestions = []
+dictionary = utils.load_dictionary(pwl_path=pwl_path)
+
+def get_suggestions(prefix):    
+    suggestions = [w for w in dictionary if w.startswith(prefix) and w != prefix]
     
-    suggestions = dictionary.suggest(word)
+    scored = [(w, difflib.SequenceMatcher(None, prefix, w).ratio()) for w in suggestions]
+    scored.sort(key=lambda x: x[1], reverse=True)
+    suggestions = [w for w, score in scored]
+        
     if suggestions:
-        for suggestion in suggestions:
-            if suggestion.startswith(word):
-                valid_suggestions.append(suggestion)
-        return valid_suggestions
+        return suggestions
     else:
         return False
 
@@ -55,7 +59,10 @@ def suggest_next():
     update_suggestions([None, "Next Word 1", "Next Word 2"])
 
 def suggest(last_word, text, words):
-    update_suggestions([f'"{last_word}"', None, None])
+    if last_word in dictionary:
+        update_suggestions([last_word, None, None])
+    else:
+        update_suggestions([f'"{last_word}"', None, None])
     if last_word:
         suggestions = get_suggestions(last_word)
         if suggestions and len(suggestions) >= 2:
@@ -66,7 +73,7 @@ def suggest(last_word, text, words):
             update_suggestions([None, "", ""])
     elif text.endswith(" "):
         if words[-2]:
-            if not dictionary.check(words[-2]):
+            if not words[-2] in dictionary:
                 last_word = words[-2]
                 if last_word in learned_words:
                     learned_words[last_word]["uses"] += 1
@@ -74,7 +81,9 @@ def suggest(last_word, text, words):
                     learned_words[last_word] = {"uses": 1}
                 click.secho(f"{last_word} has been used {learned_words[last_word]['uses']} times.", fg="yellow")
                 if learned_words[last_word]["uses"] >= 3:
-                    pwl.add_to_pwl(last_word)
+                    dictionary.append(last_word)
+                    with open(pwl_path, 'a') as pwl_file:
+                        pwl_file.write(f"{last_word}\n")
                     click.secho(f"Added {last_word} to PWL", fg="blue")
             
             suggest_next()
@@ -83,7 +92,7 @@ def suggest(last_word, text, words):
 
 def on_press(key):
     global gui_root, text1, text2, text3
-    global letters, texts, learned_words, pwl
+    global letters, texts, learned_words
 
     current_window_id = str(utils.get_window_id())
     if current_window_id not in letters:
@@ -104,16 +113,22 @@ def on_press(key):
         if not last_word.isnumeric():
             if last_word.strip:
                 last_word = last_word.strip()
-                if last_word and dictionary.check(last_word):
-                    click.secho(last_word, fg="green")
-                    update_suggestions([f'"{last_word}"', None, None])
-                else:
-                    suggest(last_word, text, words)
+                click.echo(last_word)
+                suggest(last_word, text, words)
+                #if last_word and last_word in dictionary:
+                #    click.secho(last_word, fg="green")
+                #    update_suggestions([f'"{last_word}"', None, None])
+                #else:
+                #    suggest(last_word, text, words)
             else:
                 suggest(last_word, text, words)
-                    
-def main():
+                
+def on_release(key):
+    pass
+                 
+def main():    
     with Listener(
-        on_press=on_press
+        on_press=on_press,
+        on_release=on_release
     ) as listener:
         listener.join()
