@@ -41,6 +41,46 @@ def get_window_id():
         click.echo(e)
     return "Unknown"
 
+def update_suggestions(suggestions):
+    if gui_root and text1:
+        def update_text():
+            if suggestions[0] is not None:
+                text1.delete("1.0", "end")
+                text1.insert("1.0", suggestions[0])
+            if suggestions[1] is not None:
+                text2.delete("1.0", "end")
+                text2.insert("1.0", suggestions[1])
+            if suggestions[2] is not None:
+                text3.delete("1.0", "end")
+                text3.insert("1.0", suggestions[2])
+        gui_root.after(0, update_text)
+        
+def suggest(last_word, text, words):
+    update_suggestions([f'"{last_word}"', None, None])
+    if last_word:
+        suggestions = dictionary.suggest(last_word)
+        if suggestions:
+            update_suggestions([None, suggestions[0], suggestions[1]])
+            #print(suggestions)
+        else:
+            click.secho(f"No suggestions for: {last_word}", fg="yellow")
+    elif text.endswith(" "):
+        if words[-2]:
+            if not dictionary.check(words[-2]):
+                last_word = words[-2]
+                if last_word in learned_words:
+                    learned_words[last_word]["uses"] += 1
+                else:
+                    learned_words[last_word] = {"uses": 1}
+                click.secho(f"{last_word} has been used {learned_words[last_word]['uses']} times.", fg="yellow")
+                if learned_words[last_word]["uses"] >= 3:
+                    pwl.add_to_pwl(last_word)
+                    click.secho(f"Added {last_word} to PWL", fg="blue")
+            
+            click.echo("Suggest next word")
+        else:
+            click.echo("Suggest next word")
+
 def on_press(key):
     global gui_root, text1, text2, text3
     global letters, texts, learned_words, pwl
@@ -61,34 +101,16 @@ def on_press(key):
     words = text.split(" ")
     if words:
         last_word = words[-1]
-        
-        if gui_root and text1:
-            def update_text():
-                text1.delete("1.0", "end")
-                text1.insert("1.0", last_word)
-            gui_root.after(0, update_text)
-        
         if not last_word.isnumeric():
-            if last_word and dictionary.check(last_word):
-                click.secho(last_word, fg="green")
+            if last_word.strip:
+                last_word = last_word.strip()
+                if last_word and dictionary.check(last_word):
+                    click.secho(last_word, fg="green")
+                    update_suggestions([f'"{last_word}"', None, None])
+                else:
+                    suggest(last_word, text, words)
             else:
-                if last_word:
-                    suggestions = dictionary.suggest(last_word)
-                    if suggestions:
-                        click.secho(suggestions[0], fg="red")
-                    else:
-                        click.secho(f"No suggestions for: {last_word}", fg="yellow")
-                elif text.endswith(" "):
-                    if not dictionary.check(words[-2]):
-                        last_word = words[-2]
-                        if last_word in learned_words:
-                            learned_words[last_word]["uses"] += 1
-                        else:
-                            learned_words[last_word] = {"uses": 1}
-                        click.secho(f"{last_word} has been used {learned_words[last_word]['uses']} times.", fg="yellow")
-                        if learned_words[last_word]["uses"] >= 3:
-                            pwl.add_to_pwl(last_word)
-                            click.secho(f"Added {last_word} to PWL", fg="blue")
+                suggest(last_word, text, words)
     
 def main():
     with Listener(on_press=on_press) as listener:
