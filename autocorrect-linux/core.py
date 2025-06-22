@@ -5,6 +5,11 @@ from subprocess import PIPE, Popen
 import enchant.pypwl
 from pynput.keyboard import Key, Listener
 
+gui_root = None
+text1 = None
+text2 = None
+text3 = None
+
 letters = {}
 texts = {}
 learned_words = {}
@@ -37,6 +42,7 @@ def get_window_id():
     return "Unknown"
 
 def on_press(key):
+    global gui_root, text1, text2, text3
     global letters, texts, learned_words, pwl
 
     current_window_id = str(get_window_id())
@@ -55,6 +61,13 @@ def on_press(key):
     words = text.split(" ")
     if words:
         last_word = words[-1]
+        
+        if gui_root and text1:
+            def update_text():
+                text1.delete("1.0", "end")
+                text1.insert("1.0", last_word)
+            gui_root.after(0, update_text)
+        
         if not last_word.isnumeric():
             if last_word and dictionary.check(last_word):
                 click.secho(last_word, fg="green")
