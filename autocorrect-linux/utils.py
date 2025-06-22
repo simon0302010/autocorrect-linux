@@ -24,7 +24,7 @@ def get_window_id():
         click.echo(e)
     return "Unknown"
 
-def load_dictionary():
+def load_dictionary(pwl_path=None):
     dict_path = os.path.join(data_dir, "words_alpha.txt")
     try:
         if not os.path.exists(dict_path):
@@ -38,6 +38,9 @@ def load_dictionary():
                 return []
         click.echo("Loading dictionary...")
         with open(dict_path, 'r', encoding='utf-8') as f:
+            if pwl_path:
+                with open(pwl_path, 'r', encoding='utf-8') as pwl_file:
+                    f = pwl_file.readlines() + f.readlines()
             words = sorted(line.strip() for line in f)
         return words
     except requests.RequestException as e:
