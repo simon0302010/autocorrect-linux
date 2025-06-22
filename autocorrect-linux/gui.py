@@ -6,7 +6,7 @@ def build_gui():
     root = customtkinter.CTk()
 
     width = 350
-    height = 65
+    height = 80
 
     x, y = mouse.position
 
