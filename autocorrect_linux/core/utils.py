@@ -1,6 +1,7 @@
 import os
 import click
 import requests
+import threading
 from Xlib import X, XK, display
 from subprocess import PIPE, Popen
 
@@ -51,28 +52,23 @@ def load_dictionary(pwl_path=None):
         click.echo(f"Error loading dictionary: {e}")
         return []
     
-def check_combination():
+def hotkey_listener(callback):
     disp = display.Display()
     root = disp.screen().root
-    
-    MODIFIER_1 = X.ControlMask
-    MODIFIER_2 = X.Mod1Mask
-    
-    keysym = XK.string_to_keysym("z")
-    keycode = disp.keysym_to_keycode(keysym)
-    
-    root.grab_key(keycode, MODIFIER_1 | MODIFIER_2, True, X.GrabModeAsync, X.GrabModeAsync)
-    
+
+    MODIFIER_ALT = X.Mod1Mask
+    keycode = disp.keysym_to_keycode(XK.string_to_keysym("c"))
+
     for mod in [0, X.LockMask, X.Mod2Mask, X.LockMask | X.Mod2Mask]:
-        root.grab_key(keycode, MODIFIER_1 | MODIFIER_2 | mod, True, X.GrabModeAsync, X.GrabModeAsync)
-        
+        try:
+            root.grab_key(keycode, MODIFIER_ALT | mod, True, X.GrabModeAsync, X.GrabModeAsync)
+        except Exception as e:
+            click.echo(f"Grab failed: {e}")
+
     root.change_attributes(event_mask=X.KeyPressMask)
-    
+
     while True:
         event = disp.next_event()
         if event.type == X.KeyPress:
-            if event.detail == keycode and (event.state & (MODIFIER_1 | MODIFIER_2)) == (MODIFIER_1 | MODIFIER_2):
-                print("Ctrl+Alt+Z pressed!")
-                
-if __name__ == "__main__":
-    check_combination()
+            if event.detail == keycode and (event.state & MODIFIER_ALT) == MODIFIER_ALT:
+                callback()
