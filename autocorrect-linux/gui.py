@@ -15,24 +15,22 @@ def build_gui():
     root.geometry(f"{width}x{height}+{x - width // 2}+{y - height // 2}")
     root.overrideredirect(True)
 
+    for i in range(4):
+        root.columnconfigure(i, weight=1 if i < 3 else 0)
     root.rowconfigure(0, minsize=30)
-
-    text1 = customtkinter.CTkTextbox(root, border_width=1)
-    text1.grid(row=1, column=0, sticky='nsew')
-    text1.insert('1.0', 'Test 1')
-
-    text2 = customtkinter.CTkTextbox(root, border_width=1)
-    text2.grid(row=1, column=1, sticky='nsew')
-    text2.insert('1.0', 'Test 2')
-
-    text3 = customtkinter.CTkTextbox(root, border_width=1)
-    text3.grid(row=1, column=2, sticky='nsew')
-    text3.insert('1.0', 'Test 3')
-
-    root.columnconfigure(0, weight=1)
-    root.columnconfigure(1, weight=1)
-    root.columnconfigure(2, weight=1)
     root.rowconfigure(1, weight=1)
+    
+    stats = customtkinter.CTkTextbox(root, border_width=0, height=30, text_color="gray")
+    stats.grid(row=0, column=0, columnspan=3, sticky='nsew')
+
+    text1 = customtkinter.CTkTextbox(root, border_width=2)
+    text1.grid(row=1, column=0, sticky='nsew')
+
+    text2 = customtkinter.CTkTextbox(root, border_width=2)
+    text2.grid(row=1, column=1, sticky='nsew')
+
+    text3 = customtkinter.CTkTextbox(root, border_width=2)
+    text3.grid(row=1, column=2, sticky='nsew')
 
     close_button = customtkinter.CTkButton(
         root,
@@ -45,4 +43,4 @@ def build_gui():
     )
     close_button.place(x=width-35, y=5)
 
-    return root, (text1, text2, text3)
+    return root, (text1, text2, text3, stats)
