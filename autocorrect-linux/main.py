@@ -2,8 +2,8 @@ import threading
 from time import sleep
 from pynput.keyboard import Listener
 
-from . import core
-from . import gui
+from .core import core
+from .core import gui
 
 def key_listener():
     with Listener(on_press=core.on_press) as listener:

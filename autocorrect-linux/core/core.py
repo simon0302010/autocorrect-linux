@@ -1,9 +1,9 @@
 import re
 import os
 import click
+import distance
 from . import utils
-from pynput import keyboard
-from pynput.keyboard import Key, Listener, KeyCode
+from pynput.keyboard import Key, Listener
 
 # set variables
 gui_root = None
@@ -25,12 +25,15 @@ if not os.path.exists(pwl_path):
 # load dictionary
 dictionary = utils.load_dictionary(pwl_path=pwl_path)
 
+def get_similar(word):
+    list_tuples = sorted(distance.ifast_comp(word, dictionary))[:50]
+    output = []
+    for (_, single_word) in list_tuples:
+        output.append(single_word)
+    return output
+
 def get_suggestions(prefix):    
     suggestions = [w for w in dictionary if w.startswith(prefix) and w != prefix]
-    
-    #scored = [(w, difflib.SequenceMatcher(None, prefix, w).ratio()) for w in suggestions]
-    #scored.sort(key=lambda x: x[1], reverse=True)
-    #suggestions = [w for w, score in scored]
         
     if suggestions:
         return suggestions
@@ -51,7 +54,7 @@ def update_suggestions(suggestions, last_time=None):
                 text3.insert("1.0", suggestions[2])
             if last_time is not None:
                 stats.delete("1.0", "end")
-                stats.insert("1.0", f"lookup took {last_time}s")
+                stats.insert("1.0", f"inference took {round(last_time * 1000)}ms")
         gui_root.after(0, update_text)
 
 def suggest_next(text):
@@ -71,7 +74,10 @@ def suggest(last_word, text, words):
         elif suggestions and len(suggestions) == 1:
             update_suggestions([None, suggestions[0], ""])
         else:
-            update_suggestions([None, "", ""])
+            similar = get_similar(last_word)
+            if similar and len(similar) >= 2: update_suggestions([None, similar[0], similar[1]])
+            elif similar and len(similar) == 1: update_suggestions([None, similar[0], ""])
+            else: update_suggestions([None, "", ""])
     elif text.endswith(" "):
         if words[-2]:
             if not words[-2] in dictionary and not words[-2].isnumeric():

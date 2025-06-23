@@ -58,7 +58,7 @@ def check_combination():
     MODIFIER_1 = X.ControlMask
     MODIFIER_2 = X.Mod1Mask
     
-    keysym = XK.string_to_keysym("t")
+    keysym = XK.string_to_keysym("z")
     keycode = disp.keysym_to_keycode(keysym)
     
     root.grab_key(keycode, MODIFIER_1 | MODIFIER_2, True, X.GrabModeAsync, X.GrabModeAsync)
@@ -72,4 +72,7 @@ def check_combination():
         event = disp.next_event()
         if event.type == X.KeyPress:
             if event.detail == keycode and (event.state & (MODIFIER_1 | MODIFIER_2)) == (MODIFIER_1 | MODIFIER_2):
-                print("Ctrl+Alt+T pressed!")
+                print("Ctrl+Alt+Z pressed!")
+                
+if __name__ == "__main__":
+    check_combination()
