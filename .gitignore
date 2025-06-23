@@ -196,4 +196,5 @@ cython_debug/
 .vscode/
 test.py
 pwl.txt
-autocorrect-linux/training/dataset/
+autocorrect_linux/training/dataset
+autocorrect_linux/training/word_prediction.keras
