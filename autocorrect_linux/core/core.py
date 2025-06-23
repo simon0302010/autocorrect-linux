@@ -52,8 +52,8 @@ def update_suggestions(suggestions, last_time=None):
             if suggestions[2] is not None:
                 text3.delete("1.0", "end")
                 text3.insert("1.0", suggestions[2])
+            stats.delete("1.0", "end")
             if last_time is not None:
-                stats.delete("1.0", "end")
                 stats.insert("1.0", f"inference took {round(last_time * 1000)}ms")
         gui_root.after(0, update_text)
 
