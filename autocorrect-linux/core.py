@@ -74,7 +74,7 @@ def suggest(last_word, text, words):
             update_suggestions([None, "", ""])
     elif text.endswith(" "):
         if words[-2]:
-            if not words[-2] in dictionary:
+            if not words[-2] in dictionary and not words[-2].isnumeric():
                 last_word = words[-2]
                 if last_word in learned_words:
                     learned_words[last_word]["uses"] += 1
@@ -113,14 +113,16 @@ def on_press(key):
     if words_old:
         words = []
         for word in words_old:
-            words.append(re.sub(r'[^A-Za-z]', '', word))
+            words.append(re.sub(r'[^A-Za-z0-9]', '', word))
         last_word = words[-1]
         if not last_word.isnumeric():
-            if last_word.strip:
+            if last_word.strip():
                 last_word = last_word.strip()
                 suggest(last_word, text, words)
             else:
                 suggest(last_word, text, words)
+        else:
+            update_suggestions([last_word, None, None])
                 
 def on_release(key):
     pass
