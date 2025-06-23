@@ -22,6 +22,7 @@ def build_gui():
     
     stats = customtkinter.CTkTextbox(root, border_width=0, height=30, text_color="gray")
     stats.grid(row=0, column=0, columnspan=3, sticky='nsew')
+    stats.insert('1.0', "start typing for suggestions to appear")
 
     text1 = customtkinter.CTkTextbox(root, border_width=2)
     text1.grid(row=1, column=0, sticky='nsew')
