@@ -13,7 +13,7 @@ def main():
     root, textboxes = gui.build_gui()
     
     core.gui_root = root
-    core.text1, core.text2, core.text3 = textboxes
+    core.text1, core.text2, core.text3, core.stats = textboxes
     
     listener_thread = threading.Thread(target=key_listener, daemon=True)
     listener_thread.start()
