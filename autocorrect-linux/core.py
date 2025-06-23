@@ -1,9 +1,6 @@
 import re
 import os
 import click
-#import enchant
-#import enchant.pypwl
-import difflib
 from . import utils
 from pynput import keyboard
 from pynput.keyboard import Key, Listener, KeyCode
@@ -13,6 +10,7 @@ gui_root = None
 text1 = None
 text2 = None
 text3 = None
+stats = None
 
 # dictionaries to store letters, texts, and learned words
 letters = {}
@@ -24,10 +22,7 @@ pwl_path = os.path.join(utils.data_dir, "pwl.txt")
 if not os.path.exists(pwl_path):
     open(pwl_path, 'a').close()
 
-# load dictionaries
-# pwl = enchant.pypwl.PyPWL(pwl_path)
-# dictionary = enchant.DictWithPWL("en", pwl_path)
-
+# load dictionary
 dictionary = utils.load_dictionary(pwl_path=pwl_path)
 
 def get_suggestions(prefix):    
@@ -42,7 +37,7 @@ def get_suggestions(prefix):
     else:
         return False
 
-def update_suggestions(suggestions):
+def update_suggestions(suggestions, last_time=None):
     if gui_root and text1:
         def update_text():
             if suggestions[0] is not None:
@@ -54,10 +49,15 @@ def update_suggestions(suggestions):
             if suggestions[2] is not None:
                 text3.delete("1.0", "end")
                 text3.insert("1.0", suggestions[2])
+            if last_time is not None:
+                stats.delete("1.0", "end")
+                stats.insert("1.0", f"lookup took {last_time}s")
         gui_root.after(0, update_text)
 
-def suggest_next():
-    update_suggestions(["Next Word 1", "Next Word 2", "Next Word 3"])
+def suggest_next(text):
+    click.echo(f"Text: {text}")
+    predictions = ["Next Word 1", "Next Word 2", "Next Word 3", "Next Word 4"][:3]
+    update_suggestions(predictions)
 
 def suggest(last_word, text, words):
     if last_word in dictionary:
@@ -86,10 +86,9 @@ def suggest(last_word, text, words):
                     with open(pwl_path, 'a') as pwl_file:
                         pwl_file.write(f"{last_word}\n")
                     click.secho(f"Added {last_word} to PWL", fg="blue")
-            
-            suggest_next()
+            suggest_next(text)
         else:
-            suggest_next()
+            suggest_next(text)
 
 def on_press(key):
     global gui_root, text1, text2, text3
@@ -107,7 +106,7 @@ def on_press(key):
         letters[current_window_id].append(" ")
     
     text = "".join(letters[current_window_id])
-    click.echo(text)
+    #click.echo(text)
     texts[current_window_id] = text
     words_old = text.split(" ")
     if words_old:
@@ -122,7 +121,7 @@ def on_press(key):
             else:
                 suggest(last_word, text, words)
         else:
-            update_suggestions([last_word, None, None])
+            update_suggestions([last_word, "", ""])
                 
 def on_release(key):
     pass
