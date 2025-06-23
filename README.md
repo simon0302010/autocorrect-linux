@@ -1,6 +1,6 @@
 ![Hackatime](https://hackatime-badge.hackclub.com/U08HC7N4JJW/autocorrect-linux)
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/simon0302010/autocorrect-linux/.github%2Fworkflows%2Fpython-package.yml)
-![PyPI - Version](https://img.shields.io/pypi/v/autocorrect-linux)
+![PyPI - Version](https://img.shields.io/pypi/v/autocorrect_linux)
 
 
 # autocorrect-linux
@@ -36,12 +36,12 @@ sudo apt install x11-utils
 
 Install the package:
 ```bash
-pip install autocorrect-linux
+pip install autocorrect_linux
 ```
 
 ## Usage
 
 ```bash
-python -m autocorrect-liunx
+python -m autocorrect_liunx
 ```
 The floating window will appear at your mouse cursor, showing suggestions as you type.
