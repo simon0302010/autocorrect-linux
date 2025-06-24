@@ -1,12 +1,15 @@
+import os
 import numpy as np
+from . import utils
 from time import time
 from keras.models import load_model
-import os
 
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
 
-model = load_model('/home/simon/Documents/python/autocorrect-linux/autocorrect_linux/training/model.keras')
-data = np.load('/home/simon/Documents/python/autocorrect-linux/autocorrect_linux/training/model_vocab.npz', allow_pickle=True)
+model_path, vocab_path = utils.download_model()
+
+model = load_model(model_path)
+data = np.load(vocab_path, allow_pickle=True)
 word2idx = data['word2idx'].item()
 idx2word = data['idx2word'].item()
 seq_lenght = 10
