@@ -40,9 +40,13 @@ def generate(base_text: str, outputs):
         )
         output.add(result)
         attempts += 1
+        
+    result_list = list(output)
+    while len(result_list) < outputs:
+        result_list.append(None)
 
     print(f"took {round((time() - start_time) * 1000)}ms")
-    return list(output)
+    return result_list
 
 predict_next_words(
     model, "I ", word2idx, idx2word, seq_lenght=seq_lenght, temperature=0.8
