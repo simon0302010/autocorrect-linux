@@ -1,19 +1,17 @@
-![Hackatime](https://hackatime-badge.hackclub.com/U08HC7N4JJW/autocorrect-linux)
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/simon0302010/autocorrect-linux/.github%2Fworkflows%2Fpython-package.yml)
-![PyPI - Version](https://img.shields.io/pypi/v/autocorrect_linux)
-
-
 # autocorrect-linux
 
-**autocorrect-linux** is a system-wide autocorrect tool for Linux desktops. It provides real-time spelling suggestions and corrections for any application, using a global keyboard listener and a floating GUI.
+**autocorrect-linux** is a system-wide word suggestion and prediction tool for Linux desktops.  
+It provides real-time word suggestions and next-word predictions for any application, using a global keyboard listener and a floating GUI.  
+**Note:** This tool does **not** automatically replace misspelled words—it only suggests possible corrections and predictions.
 
 ## Features
 
-- Real-time autocorrect suggestions for any window
+- Real-time word suggestions for any window
+- Next-word prediction using Machine Learning
 - Custom personal word list (PWL) support
-- Words flagged as incorrect get added PWL after being used 3 times
-- Always-on-top floating GUI (When activated)
-- Fast next-word recommendations using Machine Learning (planned)
+- Words flagged as incorrect get added to PWL after being used 3 times
+- Always-on-top floating GUI (when activated)
+- Works system-wide on Linux/X11
 
 ## Requirements
 
@@ -42,6 +40,7 @@ pip install autocorrect_linux
 ## Usage
 
 ```bash
-python -m autocorrect_liunx
+python -m autocorrect_linux
 ```
-The floating window will appear at your mouse cursor, showing suggestions as you type.
+A floating window will appear at your mouse cursor, showing word suggestions and predictions as you type.  
+You can click on suggestions to copy them, but the tool will **not** automatically replace words in your
