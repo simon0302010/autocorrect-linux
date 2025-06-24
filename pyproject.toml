@@ -7,7 +7,7 @@ name = "autocorrect_linux"
 version = "0.4.0"
 description = "System-wide autocorrect for Linux"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.9, <3.12"
 license = "GPL-3.0" 
 authors = [
     {name = "simon0302010", email = "simon0302010@gmail.com"}
@@ -20,6 +20,7 @@ dependencies = [
     "distance",
     "tqdm",
     "keras",
+    "tensorflow",
     "numpy",
     "python-xlib"
 ]

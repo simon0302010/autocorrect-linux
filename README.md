@@ -20,8 +20,8 @@ It provides real-time word suggestions and next-word predictions for any applica
 ## Requirements
 
 - Linux (X11)
-- Python 3.9+
-- **2GB free disk space required** (for model and data files)
+- Python 3.9 - 3.11
+- **4GB free disk space required** (for model and data files)
 - **8GB RAM recommended** (for smooth operation)
 
 ---
