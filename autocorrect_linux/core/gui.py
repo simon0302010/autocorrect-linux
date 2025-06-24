@@ -1,3 +1,4 @@
+import sys
 import customtkinter
 from pynput.mouse import Controller
 
@@ -33,10 +34,13 @@ def build_gui():
     text3 = customtkinter.CTkTextbox(root, border_width=2)
     text3.grid(row=1, column=2, sticky='nsew')
 
+    def close_all():
+        sys.exit(0)
+
     close_button = customtkinter.CTkButton(
         root,
         text="X",
-        command=root.destroy,
+        command=close_all,
         fg_color="#ff1100",
         hover_color="#cf4d44",
         width=30,
