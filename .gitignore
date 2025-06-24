@@ -198,3 +198,4 @@ test.py
 pwl.txt
 autocorrect_linux/training/dataset
 autocorrect_linux/training/word_prediction.keras
+autocorrect_linux/training/model.keras
