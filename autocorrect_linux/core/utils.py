@@ -1,7 +1,7 @@
 import os
 import click
 import requests
-import threading
+from tqdm import tqdm
 from Xlib import X, XK, display
 from subprocess import PIPE, Popen
 
@@ -51,6 +51,34 @@ def load_dictionary(pwl_path=None):
     except requests.RequestException as e:
         click.echo(f"Error loading dictionary: {e}")
         return []
+    
+def download_model():
+    files = {
+        "model_vocab.npz": "https://simon.hackclub.app/files/autocorrect-linux/model_vocab.npz",
+        "model.keras": "https://simon.hackclub.app/files/autocorrect-linux/model.keras"
+    }
+    paths = {}
+    for filename, url in files.items():
+        dest_path = os.path.join(data_dir, filename)
+        if not os.path.exists(dest_path):
+            click.echo(f"Downloading {filename}...")
+            try:
+                response = requests.get(url, stream=True)
+                if response.status_code == 200:
+                    total = int(response.headers.get('content-length', 0))
+                    with open(dest_path, 'wb') as f, tqdm(
+                        total=total, unit='B', unit_scale=True, desc=filename
+                    ) as bar:
+                        for chunk in response.iter_content(chunk_size=8192):
+                            if chunk:
+                                f.write(chunk)
+                                bar.update(len(chunk))
+                else:
+                    click.echo(f"Failed to download {filename}: {response.status_code}")
+            except Exception as e:
+                click.echo(f"Error downloading {filename}: {e}")
+        paths[filename] = dest_path
+    return paths["model.keras"], paths["model_vocab.npz"]
     
 def hotkey_listener(callback):
     disp = display.Display()
