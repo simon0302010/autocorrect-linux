@@ -15,10 +15,13 @@ authors = [
 dependencies = [
     "click",
     "pynput",
-#    "pyenchant",
     "requests",
     "customtkinter",
-    "distance"
+    "distance",
+    "tqdm",
+    "keras",
+    "numpy",
+    "python-xlib"
 ]
 classifiers = [
     "Operating System :: POSIX :: Linux"
