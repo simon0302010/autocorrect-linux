@@ -1,6 +1,9 @@
 import numpy as np
 from time import time
 from keras.models import load_model
+import os
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
 
 model = load_model('/home/simon/Documents/python/autocorrect-linux/autocorrect_linux/training/model.keras')
 data = np.load('/home/simon/Documents/python/autocorrect-linux/autocorrect_linux/training/model_vocab.npz', allow_pickle=True)
