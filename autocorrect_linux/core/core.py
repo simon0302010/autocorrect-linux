@@ -3,6 +3,7 @@ import os
 import click
 import distance
 from . import utils
+from . import predict
 from pynput.keyboard import Key, Listener
 
 # set variables
@@ -59,11 +60,11 @@ def update_suggestions(suggestions, last_time=None):
 
 def suggest_next(text):
     click.echo(f"Text: {text}")
-    predictions = ["Next Word 1", "Next Word 2", "Next Word 3", "Next Word 4"][:3]
+    predictions = predict.generate(text, 3)
     update_suggestions(predictions)
 
-def suggest(last_word, text, words):
-    if last_word in dictionary:
+def suggest(last_word: str, text: str, words):
+    if last_word.lower() in dictionary:
         update_suggestions([last_word, None, None])
     else:
         update_suggestions([f'"{last_word}"', None, None])
@@ -80,7 +81,7 @@ def suggest(last_word, text, words):
             else: update_suggestions([None, "", ""])
     elif text.endswith(" "):
         if words[-2]:
-            if not words[-2] in dictionary and not words[-2].isnumeric():
+            if not words[-2].lower() in dictionary and not words[-2].isnumeric():
                 last_word = words[-2]
                 if last_word in learned_words:
                     learned_words[last_word]["uses"] += 1
