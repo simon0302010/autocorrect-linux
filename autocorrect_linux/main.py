@@ -1,3 +1,4 @@
+import platform
 import threading
 
 from pynput.keyboard import Listener
@@ -6,6 +7,10 @@ from .core import core, gui, utils
 
 listener = None
 running = False
+
+python_version = platform.python_version()
+
+print(f"Running on Python {python_version}")
 
 
 def key_listener():
